@@ -838,6 +838,11 @@
       "source": "./src/internal/selectable-card.ts",
       "types": "./dist/internal/selectable-card.d.ts",
       "default": "./dist/internal/selectable-card.js"
+    },
+    "./internal/calendar-system": {
+      "source": "./src/internal/calendar-system.ts",
+      "types": "./dist/internal/calendar-system.d.ts",
+      "default": "./dist/internal/calendar-system.js"
     }
   },
   "files": [
