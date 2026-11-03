@@ -676,7 +676,6 @@ function PointerDateField({
     onClear: clearTypedDate,
     onTypedDate: navigateToTypedDate,
     isDisabled: isEffectivelyDisabled,
-    dropsDraftWhenDisabled: true,
     status,
     isStatusAnnounced: !inputGroup,
     hasPlaceholder: placeholderFromProps != null,

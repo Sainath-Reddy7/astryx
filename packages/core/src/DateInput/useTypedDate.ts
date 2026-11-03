@@ -251,10 +251,8 @@ export interface UseTypedDateFieldOptions extends UseTypedDateOptions {
   onClear: () => void;
   /** Runs when typing completes a new date, such as to show its month. */
   onTypedDate?: (value: ISODateString) => void;
-  /** A disabled or busy field ignores typing. */
+  /** A disabled or busy field ignores typing and drops typed text on commit. */
   isDisabled: boolean;
-  /** Whether a commit in a disabled or busy field drops the typed text. */
-  dropsDraftWhenDisabled: boolean;
   /** The caller's status, shown instead of a typed rejection. */
   status?: InputStatus;
   /** Whether the shown status announces itself, as Field's status does. */
@@ -293,7 +291,6 @@ export function useTypedDateField({
   onClear,
   onTypedDate,
   isDisabled,
-  dropsDraftWhenDisabled,
   status,
   isStatusAnnounced,
   hasPlaceholder,
@@ -383,8 +380,8 @@ export function useTypedDateField({
     if (pendingInput === null) {
       return;
     }
-    // A disabled or busy field keeps its value and drops the draft.
-    if (isDisabled && dropsDraftWhenDisabled) {
+    // Text typed before the field became disabled or busy never commits.
+    if (isDisabled) {
       reset();
       return;
     }
@@ -410,15 +407,7 @@ export function useTypedDateField({
     // A new typing session reports a retyped date again.
     lastFiredRef.current = undefined;
     reset();
-  }, [
-    pendingInput,
-    isDisabled,
-    dropsDraftWhenDisabled,
-    onClear,
-    typedDate,
-    report,
-    reset,
-  ]);
+  }, [pendingInput, isDisabled, onClear, typedDate, report, reset]);
 
   const handleFocus = useCallback(() => {
     setIsFocused(true);
