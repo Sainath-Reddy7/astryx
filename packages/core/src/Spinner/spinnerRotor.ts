@@ -15,10 +15,7 @@
 import * as stylex from '@stylexjs/stylex';
 import {durationVars} from '../theme/tokens.stylex';
 
-/**
- * Default fraction of the ring the moving arc covers. The canvas ring this
- * replaces swept 135deg, not the 270deg its constant's comment claimed.
- */
+/** The fraction of the ring the arc covers: 135°. */
 export const SPINNER_ARC_FRACTION = 0.375;
 
 /**
@@ -64,7 +61,7 @@ export const spinnerRotorStyles = stylex.create({
  * each mount re-force what the previous one invalidated: 53 style recalcs for
  * 38 spinners, against 19 batched.
  */
-const pendingRotors = new Set<HTMLSpanElement>();
+const pendingRotors = new Set<Element>();
 let flushScheduled = false;
 
 function pinRotorsToTimelineOrigin(): void {
@@ -85,7 +82,7 @@ function pinRotorsToTimelineOrigin(): void {
  * It reads nothing back — the geometry is resolved by the cascade, not in JS.
  */
 export function syncRotationPhase(
-  rotor: HTMLSpanElement | null,
+  rotor: Element | null,
 ): (() => void) | undefined {
   if (rotor == null) {
     return undefined;

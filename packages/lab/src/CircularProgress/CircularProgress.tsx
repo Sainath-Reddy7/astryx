@@ -165,7 +165,6 @@ const styles = stylex.create({
     display: 'block',
     transform: 'rotate(-90deg)',
   },
-  // The indeterminate ring turns with Spinner's rotor (spinnerRotorStyles).
   svgIndeterminate: {
     display: 'block',
   },

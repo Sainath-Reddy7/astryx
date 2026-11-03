@@ -225,8 +225,7 @@ const styles = stylex.create({
     // which put the ring 1.5-3.3px off across the four sizes.
     overflow: 'visible',
   },
-  // The rotor is the frame's size, so it turns about the ring's centre. Its
-  // turn comes from the shared rotor (`spinnerRotor.ts`).
+  // The rotor is the frame's size, so it turns about the ring's centre.
   rotor: {
     display: 'block',
     gridArea: '1 / 1',

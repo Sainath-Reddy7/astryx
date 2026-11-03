@@ -394,11 +394,6 @@ describe('Spinner ring', () => {
     expect(raf).not.toHaveBeenCalled();
   });
 
-  // The ring turns on the compositor: only the rotor moves, and only by
-  // `transform`, a property the browser animates without the main thread. A
-  // paint animation such as `stroke-dashoffset` would repaint the arc on the
-  // main thread every frame. It would stop while a script runs;
-  // `SpinnerMotion.a11y.chromium.spec.ts` holds the frames.
   it('draws the arc at the shared rotor fraction', () => {
     render(<Spinner size="xl" data-testid="spinner" />);
     const arc = rotor().querySelector('circle');
@@ -408,6 +403,11 @@ describe('Spinner ring', () => {
     );
   });
 
+  // The ring turns on the compositor: only the rotor moves, and only by
+  // `transform`, a property the browser animates without the main thread. A
+  // paint animation such as `stroke-dashoffset` would repaint the arc on the
+  // main thread every frame. It would stop while a script runs;
+  // `SpinnerMotion.a11y.chromium.spec.ts` holds the frames.
   it('turns the arc by rotating the rotor, with nothing else animated', () => {
     render(<Spinner data-testid="spinner" />);
     const css = getAllInjectedCss();
