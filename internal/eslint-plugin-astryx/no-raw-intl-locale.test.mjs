@@ -154,6 +154,8 @@ tester.run('no-raw-intl-locale', rule, {
     {
       code: `new Intl.NumberFormat(locale, {useGrouping: false}).format(day);`,
       filename: CALENDAR_SYSTEM_INFRA_FILE,
+    },
+    {
       code: `new Intl.DateTimeFormat(locale, {calendar, timeZone: 'UTC'}).formatToParts(ms);`,
       filename: CALENDAR_DATE_PARSER_INFRA_FILE,
     },
@@ -311,6 +313,8 @@ tester.run('no-raw-intl-locale', rule, {
       code: `const {NumberFormat} = Intl;`,
       filename: CALENDAR_SYSTEM_INFRA_FILE,
       errors: [rawIntlReference],
+    },
+    {
       code: `new Intl.DateTimeFormat(undefined, {calendar: 'persian'});`,
       filename: CALENDAR_DATE_PARSER_INFRA_FILE,
       errors: [ambientIntlInImplementation],
