@@ -53,7 +53,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Set `calendar` (or a `-u-ca-` keyword in `locale`, such as `th-TH-u-ca-buddhist`) to show `Calendar`, and the popover fields of `DateInput` and `DateTimeInput`, in another calendar system; their bottom sheet and `DateRangeInput` show Gregorian dates. A locale alone never changes the calendar: `fa-IR` shows Gregorian dates until you set `calendar="persian"`. Date values stay Gregorian ISO strings.',
+          'Set `calendar` (or a `-u-ca-` keyword in `locale`, such as `th-TH-u-ca-buddhist`) to show `Calendar`, `DateInput`, and `DateTimeInput` in another calendar system; `DateRangeInput` shows Gregorian dates. A locale alone never changes the calendar: `fa-IR` shows Gregorian dates until you set `calendar="persian"`. Date values stay Gregorian ISO strings.',
       },
       {
         guidance: false,
@@ -96,7 +96,7 @@ export const docs = {
       type: "'gregory' | 'iso8601' | 'buddhist' | 'roc' | 'japanese' | 'persian' | 'indian' | 'hebrew' | 'chinese' | 'dangi' | 'coptic' | 'ethiopic' | 'ethioaa' | 'islamic-civil' | 'islamic-tbla' | 'islamic-umalqura'",
       required: false,
       description:
-        "Calendar system of the subtree, such as 'persian', 'hebrew', or 'buddhist'. `Calendar` shows it, and so do the popover fields of `DateInput` and `DateTimeInput`; their bottom sheet and `DateRangeInput` show Gregorian dates. When omitted, a `-u-ca-` keyword in `locale` selects the calendar, else Gregorian; a locale's default calendar never applies. A component's own `calendar` prop takes precedence. Values stay Gregorian ISO dates. Calendars other than gregory, iso8601, buddhist, roc, and japanese need `Temporal`; the context keeps the requested calendar, and where the runtime lacks `Temporal`, these components show Gregorian dates and warn in development. Load a polyfill such as `temporal-polyfill/full/global` on the server and in the browser.",
+        "Calendar system of the subtree, such as 'persian', 'hebrew', or 'buddhist'. `Calendar`, `DateInput`, and `DateTimeInput` show it; `DateRangeInput` shows Gregorian dates. When omitted, a `-u-ca-` keyword in `locale` selects the calendar, else Gregorian; a locale's default calendar never applies. A component's own `calendar` prop takes precedence. Values stay Gregorian ISO dates. Calendars other than gregory, iso8601, buddhist, roc, and japanese need `Temporal`; the context keeps the requested calendar, and where the runtime lacks `Temporal`, these components show Gregorian dates and warn in development. Load a polyfill such as `temporal-polyfill/full/global` on the server and in the browser.",
     },
     {
       name: 'children',
@@ -217,6 +217,6 @@ export const docsDense = {
     overrides:
       'sparse per-locale key overrides applied on top of shipped defaults',
     calendar:
-      'calendar system for Calendar and the DateInput and DateTimeInput popover fields; their sheet and DateRangeInput stay Gregorian (default: -u-ca- in locale, else gregory); values stay Gregorian ISO; non-Gregorian-aligned calendars need Temporal',
+      'calendar system for Calendar, DateInput, DateTimeInput; DateRangeInput stays Gregorian (default: -u-ca- in locale, else gregory); values stay Gregorian ISO; non-Gregorian-aligned calendars need Temporal',
   },
 };
