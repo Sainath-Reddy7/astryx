@@ -14,9 +14,12 @@ import {SelectableCard} from './SelectableCard';
 import {
   afterPaintsPress,
   hasReleaseFade,
+  keepsPressOutsideCoarse,
   pressArmsShadowedByDefault,
   readsPressStrength,
+  releasesOnLayer,
 } from '../__tests__/pressState';
+import {PRESS_FADE_MS} from '../utils/pressGesture';
 
 describe('SelectableCard', () => {
   it('renders children', () => {
@@ -205,6 +208,11 @@ describe('SelectableCard pressed state (touch)', () => {
       throw new Error('the card carries no pressable marker');
     }
     expect(hasReleaseFade(card)).toBe(true);
+    // Under a coarse primary pointer the `::after`'s opacity releases the
+    // press on the compositor; under any other the card keeps the
+    // strength's release it always had.
+    expect(releasesOnLayer(card, '::after', PRESS_FADE_MS)).toBe(true);
+    expect(keepsPressOutsideCoarse(card, '::after')).toBe(true);
     expect(readsPressStrength(card, '[data-astryx-press="on"]')).toBe(true);
     expect(readsPressStrength(card)).toBe(true);
     expect(afterPaintsPress(card, '[data-astryx-press="on"]')).toBe(true);

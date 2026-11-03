@@ -9,9 +9,12 @@ import {LinkProvider} from '../Link';
 import {
   afterPaintsPress,
   hasReleaseFade,
+  keepsPressOutsideCoarse,
   pressArmsShadowedByDefault,
   readsPressStrength,
+  releasesOnLayer,
 } from '../__tests__/pressState';
+import {PRESS_FADE_MS} from '../utils/pressGesture';
 
 describe('ClickableCard', () => {
   it('renders children', () => {
@@ -361,6 +364,11 @@ describe('ClickableCard pressed state (touch)', () => {
     // release, and its `::after` paints the pressed token at that strength
     // as its image on both arms, its hover and mouse colour yielding.
     expect(hasReleaseFade(card)).toBe(true);
+    // Under a coarse primary pointer the `::after`'s opacity releases the
+    // press on the compositor; under any other the card keeps the
+    // strength's release it always had.
+    expect(releasesOnLayer(card, '::after', PRESS_FADE_MS)).toBe(true);
+    expect(keepsPressOutsideCoarse(card, '::after')).toBe(true);
     expect(readsPressStrength(card, '[data-astryx-press="on"]')).toBe(true);
     expect(readsPressStrength(card)).toBe(true);
     expect(afterPaintsPress(card, '[data-astryx-press="on"]')).toBe(true);

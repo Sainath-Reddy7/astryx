@@ -19,7 +19,7 @@ import {describe, expect, it} from 'vitest';
 import * as utils from './index';
 import * as overlay from './interactionOverlay.stylex';
 
-const ROW_LAYER_STYLES = ['cell', 'cellOnImage'];
+const ROW_LAYER_STYLES = ['cell', 'cellOnImage', 'control', 'controlOver'];
 const ROW_LAYER_EXPORTS = ['cellPressConsts'];
 
 describe("the list row's press layer stays internal", () => {
