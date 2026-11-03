@@ -284,9 +284,8 @@ for all 30 shipped locales plus `pseudo`.
   stay Gregorian ISO in every calendar. The runtime's `Temporal` owns the
   arithmetic of every calendar whose months are not Gregorian; where it is
   missing, a date component that resolves such a calendar shows Gregorian
-  dates (`spec:AST-111` FR5). Shared
-  built-in date formatters pin the Gregorian calendar unless an Astryx call site
-  passes the resolved calendar. The low-level `plainDateFormat` display-calendar
+  dates (`spec:AST-111` FR5). Shared built-in date formatters pin the Gregorian
+  calendar unless an Astryx call site passes the resolved calendar. The low-level `plainDateFormat` display-calendar
   override remains a supported explicit caller choice.
 - **INV11 — Rendered direction comes from the DOM.** The provider exposes a
   semantic direction default, but Astryx layout, mirroring, and interaction SHOULD
