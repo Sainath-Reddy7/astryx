@@ -11,6 +11,7 @@
 
 import {describe, it, expect, vi, afterEach} from 'vitest';
 import {render, screen} from '@testing-library/react';
+import {SPINNER_ARC_FRACTION} from './spinnerRotor';
 import {Spinner} from './Spinner';
 import {InternationalizationProvider} from '../i18n';
 import {defineTheme} from '../theme/defineTheme';
@@ -398,6 +399,15 @@ describe('Spinner ring', () => {
   // paint animation such as `stroke-dashoffset` would repaint the arc on the
   // main thread every frame. It would stop while a script runs;
   // `SpinnerMotion.a11y.chromium.spec.ts` holds the frames.
+  it('draws the arc at the shared rotor fraction', () => {
+    render(<Spinner size="xl" data-testid="spinner" />);
+    const arc = rotor().querySelector('circle');
+    const circumference = Math.PI * 28;
+    expect(arc?.getAttribute('stroke-dasharray')).toBe(
+      `${circumference * SPINNER_ARC_FRACTION} ${circumference * (1 - SPINNER_ARC_FRACTION)}`,
+    );
+  });
+
   it('turns the arc by rotating the rotor, with nothing else animated', () => {
     render(<Spinner data-testid="spinner" />);
     const css = getAllInjectedCss();
