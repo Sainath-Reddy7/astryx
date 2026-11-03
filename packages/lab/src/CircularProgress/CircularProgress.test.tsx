@@ -149,6 +149,28 @@ function indeterminateLayers(progressbar: Element) {
   };
 }
 
+/**
+ * The Web Animations timing objects the component probes the theme's easing
+ * with (`easingOf`). jsdom has none, so a test that stubs `animate` supplies
+ * these too: linear, so progress is the elapsed fraction.
+ */
+function stubLinearTiming() {
+  class LinearEffect {
+    time = 0;
+    getComputedTiming() {
+      return {progress: this.time};
+    }
+  }
+  class LinearProbe {
+    constructor(private effect: LinearEffect) {}
+    set currentTime(ms: number) {
+      this.effect.time = ms / 1000;
+    }
+  }
+  vi.stubGlobal('KeyframeEffect', LinearEffect);
+  vi.stubGlobal('Animation', LinearProbe);
+}
+
 describe('CircularProgress', () => {
   it('renders with default props', () => {
     render(<CircularProgress value={50} label="Progress" />);
@@ -401,6 +423,7 @@ describe('CircularProgress', () => {
   it('animates a value change from where the arc is drawn, each half on time', () => {
     const calls: {keyframes: Keyframe[]; options: KeyframeAnimationOptions}[] =
       [];
+    stubLinearTiming();
     const original = Element.prototype.animate;
     const originalStyle = window.getComputedStyle;
     Element.prototype.animate = function (
@@ -462,12 +485,14 @@ describe('CircularProgress', () => {
       expect(start.keyframes.every(f => f.opacity === 1)).toBe(true);
     } finally {
       Element.prototype.animate = original;
+      vi.unstubAllGlobals();
       window.getComputedStyle = originalStyle;
     }
   });
 
   it('steps the left half at once when the arc shrinks through 6 o\u2019clock', () => {
     const calls: Keyframe[][] = [];
+    stubLinearTiming();
     const original = Element.prototype.animate;
     const originalStyle = window.getComputedStyle;
     Element.prototype.animate = function (
@@ -518,6 +543,7 @@ describe('CircularProgress', () => {
       expect(left.at(-1)!.opacity).toBe(0);
     } finally {
       Element.prototype.animate = original;
+      vi.unstubAllGlobals();
       window.getComputedStyle = originalStyle;
     }
   });
@@ -588,6 +614,7 @@ describe('CircularProgress', () => {
   it('stops a running change when the ring turns indeterminate, and draws the next value at once', () => {
     const calls: Keyframe[][] = [];
     let cancelled = 0;
+    stubLinearTiming();
     const original = Element.prototype.animate;
     const originalStyle = window.getComputedStyle;
     Element.prototype.animate = function (
@@ -646,12 +673,14 @@ describe('CircularProgress', () => {
       expect(angle(cap[0])).toBeCloseTo(108, 5);
     } finally {
       Element.prototype.animate = original;
+      vi.unstubAllGlobals();
       window.getComputedStyle = originalStyle;
     }
   });
 
   it('releases a running change when it unmounts', () => {
     let cancelled = 0;
+    stubLinearTiming();
     const original = Element.prototype.animate;
     const originalStyle = window.getComputedStyle;
     Element.prototype.animate = function () {
@@ -685,36 +714,9 @@ describe('CircularProgress', () => {
       expect(cancelled).toBe(4);
     } finally {
       Element.prototype.animate = original;
+      vi.unstubAllGlobals();
       window.getComputedStyle = originalStyle;
     }
-  });
-
-  it('shows a new value at once under reduced motion', () => {
-    // The fill's transition-duration is 0 s under both shared reduced-motion
-    // queries, a fine pointer's and a coarse pointer's, so a change reads back
-    // 0 s and nothing animates. Read from the source: the jsdom StyleX runtime
-    // leaves out some of the negated conditions it writes for these keys, and
-    // the Chromium test checks what a browser does.
-    const source = readFileSync(
-      path.resolve(__dirname, 'CircularProgress.tsx'),
-      'utf8',
-    );
-    const block = source.slice(source.indexOf("transitionProperty: 'none',"));
-    const duration = block.slice(
-      block.indexOf('transitionDuration: {'),
-      block.indexOf('},'),
-    );
-    for (const query of [
-      '(prefers-reduced-motion: reduce) and (not (pointer: coarse))',
-      '(prefers-reduced-motion: reduce) and (pointer: coarse)',
-    ]) {
-      const at = duration.indexOf(`'@media ${query}':`);
-      expect(at, query).toBeGreaterThanOrEqual(0);
-      expect(duration.slice(at).split(',')[0].trim()).toMatch(/'0s'$/);
-    }
-    expect(duration).not.toContain(
-      "'@media (prefers-reduced-motion: reduce)':",
-    );
   });
 
   it('handles zero max gracefully', () => {

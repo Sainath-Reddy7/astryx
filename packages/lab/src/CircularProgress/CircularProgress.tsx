@@ -255,8 +255,8 @@ const styles = stylex.create({
   //
   // The theme's duration and easing still time a change: they are declared
   // here and read back when the value changes (`transition-property: none`,
-  // so nothing transitions on its own). Under reduced motion the duration is
-  // 0 s, so a new value shows at once.
+  // so nothing transitions on its own), in every motion setting, as the
+  // stroke's transition did.
   fill: {
     position: 'absolute',
     inset: 0,
@@ -264,16 +264,7 @@ const styles = stylex.create({
     overflow: 'hidden',
     pointerEvents: 'none',
     transitionProperty: 'none',
-    // Under reduced motion a new value shows at once, on every pointer (a Lab
-    // component sits outside design:reduced-motion's scope, which covers
-    // core); the keys are the shared reduced-motion queries, a fine pointer's
-    // and a coarse pointer's.
-    transitionDuration: {
-      default: durationVars['--duration-medium'],
-      '@media (prefers-reduced-motion: reduce) and (not (pointer: coarse))':
-        '0s',
-      '@media (prefers-reduced-motion: reduce) and (pointer: coarse)': '0s',
-    },
+    transitionDuration: durationVars['--duration-medium'],
     transitionTimingFunction: easeVars['--ease-standard'],
   },
   fillHalf: {
@@ -487,23 +478,22 @@ function parseTime(value: string): number {
 
 /**
  * The theme's easing as a function of time (0–1), evaluated by the browser
- * itself through a detached animation, so any CSS easing works.
+ * itself through a detached animation, so any CSS easing works. It runs only
+ * where Web Animations exists (its caller returns first otherwise), on the
+ * fill's computed `transition-timing-function`: one easing, which a browser
+ * always reports as valid CSS.
  */
 function easingOf(easing: string): (t: number) => number {
-  try {
-    const effect = new KeyframeEffect(null, null, {
-      duration: 1000,
-      easing,
-      fill: 'both',
-    });
-    const probe = new Animation(effect);
-    return t => {
-      probe.currentTime = t * 1000;
-      return effect.getComputedTiming().progress ?? t;
-    };
-  } catch {
-    return t => t;
-  }
+  const effect = new KeyframeEffect(null, null, {
+    duration: 1000,
+    easing,
+    fill: 'both',
+  });
+  const probe = new Animation(effect);
+  return t => {
+    probe.currentTime = t * 1000;
+    return effect.getComputedTiming().progress ?? t;
+  };
 }
 
 /**
