@@ -26,7 +26,8 @@ import {
   type ComponentSidebarEntry,
   type ComponentSidebarItem,
 } from './componentSidebarData';
-import {docsSidebarGroups, type DocsSidebarItem} from './docsSidebarData';
+import {docsSidebarGroups} from './docsSidebarData';
+import {DocsSidebarItems} from './DocsSidebarItems';
 
 interface DocsShellProps {
   children: React.ReactNode;
@@ -164,32 +165,6 @@ export function DocsShell({children, packages, docTopics}: DocsShellProps) {
       ),
     );
 
-  const docLink = (d: DocTopic) => ({
-    label: d.title,
-    href: `/docs/${d.topic}`,
-    isSelected: pathname === `/docs/${d.topic}`,
-  });
-
-  const renderDocItems = (items: DocsSidebarItem[]) =>
-    items.map(({page, children}) =>
-      children.length === 0 ? (
-        <SideNavItem key={page.topic} {...docLink(page)} />
-      ) : (
-        <SideNavItem
-          key={page.topic}
-          {...docLink(page)}
-          collapsible={{
-            defaultIsCollapsed: !children.some(
-              d => pathname === `/docs/${d.topic}`,
-            ),
-          }}>
-          {children.map(d => (
-            <SideNavItem key={d.topic} {...docLink(d)} />
-          ))}
-        </SideNavItem>
-      ),
-    );
-
   return (
     <AppShell
       className="astryx-docs-shell"
@@ -230,7 +205,7 @@ export function DocsShell({children, packages, docTopics}: DocsShellProps) {
                 <SideNavItem
                   label="Guide"
                   collapsible={{defaultIsCollapsed: false}}>
-                  {renderDocItems(guideItems)}
+                  <DocsSidebarItems items={guideItems} pathname={pathname} />
                 </SideNavItem>
               </SideNavSection>
 
@@ -239,7 +214,10 @@ export function DocsShell({children, packages, docTopics}: DocsShellProps) {
                 <SideNavItem
                   label="Foundations"
                   collapsible={{defaultIsCollapsed: false}}>
-                  {renderDocItems(foundationItems)}
+                  <DocsSidebarItems
+                    items={foundationItems}
+                    pathname={pathname}
+                  />
                 </SideNavItem>
               </SideNavSection>
 
