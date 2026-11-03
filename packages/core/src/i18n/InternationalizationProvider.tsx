@@ -108,15 +108,16 @@ export interface InternationalizationProviderProps {
    */
   dir?: 'ltr' | 'rtl';
   /**
-   * The calendar system that `Calendar` in this subtree shows, such as
-   * `'persian'` or `'hebrew'`. The date inputs show Gregorian dates. Values
+   * The calendar system of this subtree, such as `'persian'` or `'hebrew'`.
+   * `Calendar` shows it, and Timestamp, PowerSearch, and Lab's Schedule write
+   * their dates in it. The date inputs show Gregorian dates. Values
    * stay Gregorian ISO dates. When omitted,
    * a `-u-ca-` keyword in `locale` selects the calendar, else Gregorian; a
    * locale's default calendar never applies. A component's own `calendar`
    * prop takes precedence. Calendars other than `gregory`, `iso8601`,
    * `buddhist`, `roc`, and `japanese` need `Temporal`. The context keeps the
-   * requested calendar; where `Temporal` is missing, `Calendar` shows
-   * Gregorian dates and warns once in development.
+   * requested calendar; where `Temporal` is missing, these components show
+   * Gregorian dates and warn once in development.
    *
    * @example
    * ```

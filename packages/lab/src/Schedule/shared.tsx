@@ -15,6 +15,8 @@ import * as stylex from '@stylexjs/stylex';
 import {useScrollableArea} from '@astryxdesign/core/hooks';
 import {getLocaleDirection, type Locale} from '@astryxdesign/core/i18n';
 import {
+  calendarMonthOf,
+  formatCalendarDate,
   useCalendarSystem,
   type CalendarSystem,
 } from '@astryxdesign/core/internal/calendar-system';
@@ -32,7 +34,9 @@ import {Spinner} from '@astryxdesign/core/Spinner';
 import {HStack} from '@astryxdesign/core/Stack';
 import {Heading, Text} from '@astryxdesign/core/Text';
 import {
+  plainDateAddDays,
   plainDateFromInstant,
+  plainDateIsEqual,
   plainDateIsBefore,
   plainDateToInstant,
   type PlainDate,
@@ -164,7 +168,11 @@ function LocalizedMonthTitle({
     year: 'numeric',
     timeZone: timezoneID,
     calendar,
-  }).formatToParts(new Date(plainDateToInstant(date, timezoneID, 12)));
+  }).formatToParts(
+    new Date(
+      plainDateToInstant(monthLabelDate(date, calendar), timezoneID, 12),
+    ),
+  );
 
   return parts.map((part, index) =>
     part.type === 'month' ? (
@@ -188,12 +196,12 @@ export function ScheduleRangeMonthTitle({
 }) {
   const {locale} = useScheduleContext();
   const calendar = useScheduleCalendar();
-  if (isSameCalendarMonth(start, end, timezoneID, locale, calendar)) {
+  if (isSameCalendarMonth(start, end, calendar)) {
     return <ScheduleMonthTitle date={start} timezoneID={timezoneID} />;
   }
 
   const startMonth = formatWithPlainDate(
-    start,
+    monthLabelDate(start, calendar),
     timezoneID,
     {month: 'long'},
     locale,
@@ -507,31 +515,33 @@ export function eventPastSurfaceColorStyle(
 
 export function formatWithPlainDate(
   date: PlainDate,
-  timezoneID: string,
+  _timezoneID: string,
   options: Intl.DateTimeFormatOptions,
   locale: Locale,
   calendar: CalendarSystem,
 ): string {
-  return new Intl.DateTimeFormat(locale, {
-    ...options,
-    timeZone: timezoneID,
-    calendar,
-  }).format(new Date(plainDateToInstant(date, timezoneID, 12)));
+  // Core's helper names the month and day that its Calendar shows; raw Intl
+  // can start a Chinese or Korean month on another day than Temporal does.
+  return formatCalendarDate(calendar, date, options, locale);
+}
+
+// A month takes the name of its middle day, as in Core's Calendar, so an era
+// that starts inside the month does not rename it.
+function monthLabelDate(date: PlainDate, calendar: CalendarSystem): PlainDate {
+  const month = calendarMonthOf(calendar, date);
+  return plainDateAddDays(month.start, Math.floor(month.length / 2));
 }
 
 // A Gregorian month or year can span two months or years of another calendar,
-// so ranges compare the calendar's own fields.
+// so ranges compare the calendar's own months and years.
 function isSameCalendarMonth(
   a: PlainDate,
   b: PlainDate,
-  timezoneID: string,
-  locale: Locale,
   calendar: CalendarSystem,
 ): boolean {
-  const options = {month: 'numeric', year: 'numeric'} as const;
-  return (
-    formatWithPlainDate(a, timezoneID, options, locale, calendar) ===
-    formatWithPlainDate(b, timezoneID, options, locale, calendar)
+  return plainDateIsEqual(
+    calendarMonthOf(calendar, a).start,
+    calendarMonthOf(calendar, b).start,
   );
 }
 
@@ -544,8 +554,20 @@ function isSameCalendarYear(
 ): boolean {
   const options = {year: 'numeric'} as const;
   return (
-    formatWithPlainDate(a, timezoneID, options, locale, calendar) ===
-    formatWithPlainDate(b, timezoneID, options, locale, calendar)
+    formatWithPlainDate(
+      monthLabelDate(a, calendar),
+      timezoneID,
+      options,
+      locale,
+      calendar,
+    ) ===
+    formatWithPlainDate(
+      monthLabelDate(b, calendar),
+      timezoneID,
+      options,
+      locale,
+      calendar,
+    )
   );
 }
 
@@ -556,7 +578,7 @@ export function formatMonthTitle(
   calendar: CalendarSystem,
 ): string {
   return formatWithPlainDate(
-    date,
+    monthLabelDate(date, calendar),
     timezoneID,
     {
       month: 'long',
@@ -574,11 +596,11 @@ export function formatWeekTitle(
   locale: Locale,
   calendar: CalendarSystem,
 ): string {
-  if (isSameCalendarMonth(start, end, timezoneID, locale, calendar)) {
+  if (isSameCalendarMonth(start, end, calendar)) {
     return formatMonthTitle(start, timezoneID, locale, calendar);
   }
   const startMonth = formatWithPlainDate(
-    start,
+    monthLabelDate(start, calendar),
     timezoneID,
     {month: 'long'},
     locale,

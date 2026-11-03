@@ -84,6 +84,10 @@ present-tense implementation gap note.
   option, outside the stable compatibility promise, as the Experimental surface
   bullet states.
 - Controlled/uncontrolled behavior: unchanged.
+- Calendar: date values follow the provider's calendar. A provider locale with
+  an explicit `-u-ca-` keyword shows that calendar; the keyword is the
+  application's explicit request (`spec:AST-111` DEC-2): nonbreaking;
+  `calendar="gregory"` keeps Gregorian.
 - Migration decisions: `component:PowerSearch/DEC-1` and
   `component:PowerSearch/DEC-2`.
 - Experimental surface (DEC-3): the touch sheet presentation is the
@@ -522,6 +526,10 @@ target in both presentations.
   ("writes the trigger token and the Filters row in the provider calendar").
   Evidence gap: no real-browser run, and no server render and hydration test,
   under a calendar that needs `Temporal`.
+- **Known gap:** under `chinese` and `dangi`, a date value with a time of day
+  takes its date from `Intl`, which can start a month on another day than
+  `Temporal`; the date-only token value names the month and day that
+  `component:Calendar` shows.
 - **Owner:** `nynexman4464`.
 - **Review condition:** Safari ships `Temporal`.
 

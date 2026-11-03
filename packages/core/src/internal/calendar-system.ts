@@ -4,7 +4,8 @@
  * @file calendar-system.ts
  * @input The i18n calendar resolution
  * @output `@astryxdesign/core/internal/calendar-system`: the hook that
- *   resolves the calendar a date component shows, for Lab components
+ *   resolves the calendar a date component shows, and the helpers that name
+ *   its months and days as Core's Calendar does, for Lab components
  * @position An internal entry reserved for Astryx's own packages:
  *   undocumented, outside the public API and its compatibility promise,
  *   versioned in lockstep with Core, and allowed only in Core and Lab by the
@@ -15,4 +16,5 @@
  */
 
 export {useCalendarSystem} from '../i18n/useCalendarSystem';
+export {calendarMonthOf, formatCalendarDate} from '../utils/calendarSystem';
 export type {CalendarSystem} from '../utils/calendarSystem';

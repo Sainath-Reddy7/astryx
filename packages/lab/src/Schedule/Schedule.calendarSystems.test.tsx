@@ -51,6 +51,19 @@ function oracle(
   }).format(NOON);
 }
 
+function oracleAt(
+  instant: number,
+  locale: string,
+  calendar: CalendarSystem,
+): string {
+  return new Intl.DateTimeFormat(locale, {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+    calendar,
+  }).format(instant);
+}
+
 afterEach(() => {
   vi.restoreAllMocks();
 });
@@ -121,6 +134,19 @@ describe.each(CALENDAR_LOCALES)(
 );
 
 describe('Schedule ranges in another calendar', () => {
+  it('titles a month with an era change by its middle, as Calendar does', () => {
+    // Heisei starts on January 8, 1989. Gregorian January 1989 is one month.
+    const title = formatWeekTitle(
+      {year: 1989, month: 1, day: 1},
+      {year: 1989, month: 1, day: 31},
+      'UTC',
+      'en',
+      'japanese',
+    );
+    expect(title).toBe(oracleAt(Date.UTC(1989, 0, 16, 12), 'en', 'japanese'));
+    expect(title).not.toContain('Shōwa');
+  });
+
   it('names both calendar months when a Gregorian month spans two', () => {
     expect(
       formatWeekTitle(

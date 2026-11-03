@@ -13,7 +13,7 @@
 import type {OperatorValue, FilterValue, EnumItem} from './types';
 import type {InternalConfig} from './useInternalConfig';
 import type {Locale, TranslatorFn} from '../i18n';
-import type {CalendarSystem} from '../utils/calendarSystem';
+import {formatInstantDate, type CalendarSystem} from '../utils/calendarSystem';
 import {truncateCharacters} from '../utils/characters';
 import {registerEnglishFallback} from '../i18n/englishFallback';
 import english from '../i18n/generated-english/PowerSearch/formatFilterValue.generated';
@@ -84,12 +84,12 @@ export function formatDateAbsoluteCompact(
   locale: Locale,
   calendar: CalendarSystem = 'gregory',
 ): string {
-  return new Intl.DateTimeFormat(locale, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
+  return formatInstantDate(
     calendar,
-  }).format(unixSeconds * 1000);
+    new Date(unixSeconds * 1000),
+    {year: 'numeric', month: 'short', day: 'numeric'},
+    locale,
+  );
 }
 
 function formatRelativeDate(value: string): string {

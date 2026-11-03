@@ -9,11 +9,18 @@
 import {describe, expect, it} from 'vitest';
 
 describe('internal/calendar-system', () => {
-  it('re-exports the hook that Core date components use, and nothing else', async () => {
+  it('re-exports the hook and the helpers that Core date components use, and nothing else', async () => {
     const entry: Record<string, unknown> = await import('./calendar-system');
     const hook = await import('../i18n/useCalendarSystem');
+    const helpers = await import('../utils/calendarSystem');
     expect(entry.useCalendarSystem).toBe(hook.useCalendarSystem);
-    expect(Object.keys(entry).sort()).toEqual(['useCalendarSystem']);
+    expect(entry.calendarMonthOf).toBe(helpers.calendarMonthOf);
+    expect(entry.formatCalendarDate).toBe(helpers.formatCalendarDate);
+    expect(Object.keys(entry).sort()).toEqual([
+      'calendarMonthOf',
+      'formatCalendarDate',
+      'useCalendarSystem',
+    ]);
   });
 
   it('the public i18n barrel does not export the hook', async () => {
