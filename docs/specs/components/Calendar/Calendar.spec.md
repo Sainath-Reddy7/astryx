@@ -233,7 +233,7 @@ button.
   ISO values, and the `Temporal` boundary; FR8–FR10 and AR1 project its FR4,
   FR6–FR8, and AR1 onto the grid.
 - `component:DateInput` and `component:DateTimeInput` pass their popover
-  Calendar the calendar their text field uses (`component:DateInput` FR16), and
+  Calendar the calendar their text field uses (`component:DateInput` FR17), and
   `component:DateRangeInput` passes `gregory`, because its trigger text is
   Gregorian.
 
