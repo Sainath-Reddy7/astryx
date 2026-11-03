@@ -275,10 +275,10 @@ for all 30 shipped locales plus `pseudo`.
   The charts `currency()` helper does not yet conform: an omitted locale follows
   the host default. That is a known conformance gap, not a recorded default;
   making it deterministic is a separate compatibility change.
-- **INV10 — The application selects the calendar; values stay Gregorian.** The
-  provider resolves its calendar from its `calendar` prop or an explicit
-  `-u-ca-` keyword in its locale, and otherwise the Gregorian calendar
-  (`spec:AST-111` FR2). Astryx date components show Gregorian dates.
+- **INV10 — The application selects the calendar; values stay Gregorian.** A
+  date component shows the calendar that it resolves from its own `calendar`
+  prop, the provider's `calendar` prop, or an explicit `-u-ca-` keyword in the
+  provider locale, and otherwise the Gregorian calendar (`spec:AST-111` FR2).
   Locale changes language, numbering, and field order; a locale's default
   calendar never applies. `PlainDate` values, constraints, and machine formats
   stay Gregorian ISO in every calendar. The runtime's `Temporal` owns the
