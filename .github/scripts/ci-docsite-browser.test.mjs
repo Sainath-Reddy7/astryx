@@ -123,7 +123,7 @@ describe('docsite-build', () => {
     expect(order).toEqual([...order].sort((a, b) => a - b));
     for (const s of [stamp, upload])
       expect(s.if).toBe("steps.browser.outputs.applies == 'true'");
-    expect(stamp.run).toBe(
+    expect(stamp.run.split('\n')[0]).toBe(
       'git rev-parse HEAD > apps/docsite/.next/BUILD_COMMIT',
     );
     expect(upload.with.name).toBe('docsite-build');

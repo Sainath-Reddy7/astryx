@@ -642,7 +642,10 @@ jobs:
       # stamp lets it check that the build is of the commit it checked out.
       - name: Stamp the build with its commit
         if: steps.browser.outputs.applies == 'true'
-        run: git rev-parse HEAD > apps/docsite/.next/BUILD_COMMIT
+        run: |
+          git rev-parse HEAD > apps/docsite/.next/BUILD_COMMIT
+          # What the upload carries, largest first.
+          du -sh apps/docsite/.next/* apps/docsite/.next/server/* apps/docsite/src/generated apps/docsite/public/monaco apps/docsite/public/vendor 2>/dev/null | sort -rh | head -15
 
       # Everything `next start` reads that the build generated and the
       # repository ignores: the build without its compile cache, the generated
