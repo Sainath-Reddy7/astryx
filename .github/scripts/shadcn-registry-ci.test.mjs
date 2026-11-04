@@ -63,9 +63,9 @@ describe('ShadCN registry CI contract', () => {
         ),
       ),
     ).toBe(true);
-    // A docsite-only change skips test-node; docsite-test runs the gate too.
+    // A docsite-only change skips test-node; docsite-build runs the gate too.
     expect(
-      ci.jobs['docsite-test'].steps.find(
+      ci.jobs['docsite-build'].steps.find(
         candidate =>
           candidate.name === 'Verify the hidden production registry gate',
       ).run,
