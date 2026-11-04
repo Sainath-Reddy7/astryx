@@ -130,6 +130,12 @@ describe('docsite-build', () => {
     expect(upload.with.path.trim().split('\n')).toEqual([
       'apps/docsite/.next/',
       '!apps/docsite/.next/cache/',
+      '!apps/docsite/.next/trace',
+      '!apps/docsite/.next/trace-build',
+      '!apps/docsite/.next/diagnostics/',
+      '!apps/docsite/.next/types/',
+      '!apps/docsite/.next/**/*.map',
+      '!apps/docsite/.next/**/*.nft.json',
       'apps/docsite/src/generated/',
       'apps/docsite/src/themes/astryx.js',
       'apps/docsite/src/themes/astryx.css',
@@ -139,6 +145,8 @@ describe('docsite-build', () => {
     ]);
     expect(upload.with['if-no-files-found']).toBe('error');
     expect(upload.with.overwrite).toBe(true);
+    expect(upload.with['retention-days']).toBe(1);
+    expect(upload.with['compression-level']).toBe(6);
   });
 });
 

@@ -644,12 +644,17 @@ jobs:
         if: steps.browser.outputs.applies == 'true'
         run: |
           git rev-parse HEAD > apps/docsite/.next/BUILD_COMMIT
-          # What the upload carries, largest first.
+          # The sizes behind the upload, largest first, and what it leaves out.
           du -sh apps/docsite/.next/* apps/docsite/.next/server/* apps/docsite/src/generated apps/docsite/public/monaco apps/docsite/public/vendor 2>/dev/null | sort -rh | head -15
+          for kind in '*.map' '*.nft.json'; do
+            echo "left out, $kind: $(find apps/docsite/.next -path apps/docsite/.next/cache -prune -o -name "$kind" -type f -print0 | du -ch --files0-from=- 2>/dev/null | tail -1)"
+          done
 
       # Everything `next start` reads that the build generated and the
-      # repository ignores: the build without its compile cache, the generated
-      # data and theme, and the playground's vendored assets.
+      # repository ignores: the server and static output, the generated data
+      # and theme, and the playground's vendored assets. Not the compile
+      # cache, the build traces, source maps or file traces (*.nft.json, for
+      # a standalone deployment), which serving never reads.
       - name: Upload the docsite build
         if: steps.browser.outputs.applies == 'true'
         uses: actions/upload-artifact@v7
@@ -658,6 +663,12 @@ jobs:
           path: |
             apps/docsite/.next/
             !apps/docsite/.next/cache/
+            !apps/docsite/.next/trace
+            !apps/docsite/.next/trace-build
+            !apps/docsite/.next/diagnostics/
+            !apps/docsite/.next/types/
+            !apps/docsite/.next/**/*.map
+            !apps/docsite/.next/**/*.nft.json
             apps/docsite/src/generated/
             apps/docsite/src/themes/astryx.js
             apps/docsite/src/themes/astryx.css
@@ -668,6 +679,9 @@ jobs:
           if-no-files-found: error
           overwrite: true
           retention-days: 1
+          # HTML, RSC payloads and JavaScript compress well; the default level
+          # takes most of that at a fraction of the highest level's time.
+          compression-level: 6
 
       - name: test-docsite (data tests)
         if: steps.scope.outputs.spec_only != 'true' && steps.scope.outputs.tooling_only != 'true' && steps.scope.outputs.lab_only != 'true'
