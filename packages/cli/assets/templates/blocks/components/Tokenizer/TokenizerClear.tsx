@@ -38,7 +38,6 @@ export default function TokenizerClear() {
           value={value}
           onChange={items => setValue(items)}
           hasClear
-          presentation="popover"
         />
       </Stack>
     </div>

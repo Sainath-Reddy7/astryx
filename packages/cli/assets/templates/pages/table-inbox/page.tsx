@@ -82,6 +82,7 @@ import {
   StackItem,
   VStack,
 } from '@astryxdesign/core/Layout';
+import {rtlStyles} from '@astryxdesign/core/utils';
 import {
   durationVars,
   easeVars,
@@ -1391,7 +1392,13 @@ function ConversationPane({
               <Button
                 label="Inbox"
                 variant="ghost"
-                icon={<Icon icon={ArrowLeftIcon} size="sm" />}
+                icon={
+                  <Icon
+                    icon={ArrowLeftIcon}
+                    size="sm"
+                    xstyle={rtlStyles.mirror}
+                  />
+                }
                 onClick={onClose}
               />
             }
@@ -1874,10 +1881,6 @@ function ComposeWindow({
                       )}
                     </>
                   }
-                  // The recipient rows read as one header, so all three stay
-                  // inline fields on every device; the sheet has no end lane
-                  // for the Cc and Bcc buttons.
-                  presentation="popover"
                 />
                 {hasCc ? (
                   <Tokenizer
@@ -1888,7 +1891,6 @@ function ComposeWindow({
                     value={cc}
                     onChange={items => setCc(items)}
                     hasCreate
-                    presentation="popover"
                   />
                 ) : null}
                 {hasBcc ? (
@@ -1900,7 +1902,6 @@ function ComposeWindow({
                     value={bcc}
                     onChange={items => setBcc(items)}
                     hasCreate
-                    presentation="popover"
                   />
                 ) : null}
                 <TextInput
